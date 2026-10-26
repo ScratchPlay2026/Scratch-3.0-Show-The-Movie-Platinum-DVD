@@ -52,6 +52,19 @@
     <button class="btn" onclick="playScene('scene1.mp4')">1</button>
     <button class="btn" onclick="playScene('scene2.mp4')">2</button>
     <button class="btn" onclick="playScene('scene3.mp4')">3</button>
+    <button class="btn" onclick="playScene('scene4.mp4')">4</button>
+    <button class="btn" onclick="playScene('scene5.mp4')">5</button>
+    <button class="btn" onclick="playScene('scene6.mp4')">6</button>
+    <button class="btn" onclick="playScene('scene7.mp4')">7</button>
+    <button class="btn" onclick="playScene('scene8.mp4')">8</button>
+    <button class="btn" onclick="playScene('scene9.mp4')">9</button>
+    <button class="btn" onclick="playScene('scene10.mp4')">10</button>
+    <button class="btn" onclick="playScene('scene11.mp4')">11</button>
+    <button class="btn" onclick="playScene('scene12.mp4')">12</button>
+    <button class="btn" onclick="playScene('scene13.mp4')">13</button>
+    <button class="btn" onclick="playScene('scene14.mp4')">14</button>
+    <button class="btn" onclick="playScene('scene15.mp4')">15</button>
+    <button class="btn" onclick="playScene('scene16.mp4')">16</button>
     <button class="btn btn-back" onclick="switchMenu('main-menu')">Back</button>
   </div>
 
