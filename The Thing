@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { margin: 0; background: #000; font-family: sans-serif; overflow: hidden; color: white; }
+  #player { width: 100vw; height: 100vh; object-fit: cover; }
+  
+  /* Menu Layout Shell */
+  .menu-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    background: rgba(0,0,0,0.5);
+  }
+  
+  .hidden { display: none !important; }
+
+  /* Sub-menu Layout Adjustments */
+  .menu-title { font-size: 24px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 30px; color: #aaa; }
+  .status-text { font-size: 14px; letter-spacing: 1px; color: #888; margin-bottom: 20px; text-transform: uppercase; }
+
+  /* Premium Blu-ray Style Buttons */
+  .btn {
+    background: transparent; border: 2px solid white; color: white;
+    padding: 15px 40px; margin: 10px; font-size: 18px; cursor: pointer;
+    transition: 0.3s; border-radius: 5px; width: 340px; text-transform: uppercase;
+    letter-spacing: 2px; text-align: center;
+  }
+  .btn:hover { background: white; color: black; font-weight: bold; transform: scale(1.05); }
+  .btn.active { background: rgba(255,255,255,0.2); border-color: #00bcd4; }
+  .btn-back { border-color: #555; color: #888; margin-top: 30px; }
+  .btn-back:hover { background: #555; color: white; }
+</style>
+</head>
+<body>
+
+  <!-- Master Video Player and Subtitle Track Handler -->
+  <video id="player" autoplay loop src="menu.mp4">
+    <track id="subtitles" kind="subtitles" srclang="en" label="English" default>
+  </video>
+
+  <!-- 1. MAIN MENU SCREEN -->
+  <div id="main-menu" class="menu-overlay">
+    <button class="btn" onclick="playMovie()">Play Movie</button>
+    <button class="btn" onclick="switchMenu('scene-menu')">Scene Selection</button>
+    <button class="btn" onclick="switchMenu('setup-menu')">Set Up</button>
+    <button class="btn" onclick="switchMenu('bonus-menu')">Bonus Features</button>
+  </div>
+
+  <!-- 2. SCENE SELECTION MENU -->
+  <div id="scene-menu" class="menu-overlay hidden">
+    <div class="menu-title">Scene Selection</div>
+    <button class="btn" onclick="playScene('scene1.mp4')">1</button>
+    <button class="btn" onclick="playScene('scene2.mp4')">2</button>
+    <button class="btn" onclick="playScene('scene3.mp4')">3</button>
+    <button class="btn btn-back" onclick="switchMenu('main-menu')">Back</button>
+  </div>
+
+  <!-- 3. SETUP / AUDIO / SUBTITLE MENU -->
+  <div id="setup-menu" class="menu-overlay hidden">
+    <div class="menu-title">Audio & Subtitle Setup</div>
+    <div id="setup-status" class="status-text">Audio: Stereo | Subtitles: Off</div>
+    
+    <button id="audio-main-btn" class="btn active" onclick="setAudio('main')">Main Audio Track</button>
+    <button id="audio-comm-btn" class="btn" onclick="setAudio('commentary')">Director Commentary</button>
+    <button id="sub-off-btn" class="btn active" onclick="setSubtitles('off')">Subtitles: Off</button>
+    <button id="sub-on-btn" class="btn" onclick="setSubtitles('english.vtt')">Subtitles: English</button>
+    
+    <button class="btn btn-back" onclick="switchMenu('main-menu')">Back to Main Menu</button>
+  </div>
+
+  <!-- 4. BONUS FEATURES SUB-MENU -->
+  <div id="bonus-menu" class="menu-overlay hidden">
+    <div class="menu-title">Special Features</div>
+    <button class="btn" onclick="switchMenu('deleted-menu')">Deleted Scenes</button>
+    <button class="btn" onclick="playScene('bloopers.mp4')">Bloopers</button>
+    <button class="btn" onclick="playScene('behind_scenes.mp4')">Behind The Scenes</button>
+    <button class="btn btn-back" onclick="switchMenu('main-menu')">Back</button>
+  </div>
+
+  <!-- 5. DELETED SCENES SUB-MENU -->
+  <div id="deleted-menu" class="menu-overlay hidden">
+    <div class="menu-title">Deleted Scenes</div>
+    <button class="btn" onclick="playScene('deleted1.mp4')">Back on Earth</button>
+    <button class="btn" onclick="playScene('deleted2.mp4')">Alternate Ending Part 1</button>
+    <button class="btn" onclick="playScene('deleted3.mp4')">Alternate Ending Part 2</button>
+    <button class="btn btn-back" onclick="switchMenu('bonus-menu')">Back to Special Features</button>
+  </div>
+
+<script>
+  const player = document.getElementById('player');
+  const track = document.getElementById('subtitles');
+  const setupStatus = document.getElementById('setup-status');
+  
+  // Navigation Screens Mapping
+  const menus = {
+    'main-menu': document.getElementById('main-menu'),
+    'scene-menu': document.getElementById('scene-menu'),
+    'setup-menu': document.getElementById('setup-menu'),
+    'bonus-menu': document.getElementById('bonus-menu'),
+    'deleted-menu': document.getElementById('deleted-menu')
+  };
+  
+  let currentActiveMenu = 'main-menu';
+  
+  // State Trackers
+  let selectedAudio = 'main'; 
+  let selectedSubtitles = 'off'; 
+
+  function switchMenu(menuId) {
+    Object.values(menus).forEach(menu => menu.classList.add('hidden'));
+    menus[menuId].classList.remove('hidden');
+    currentActiveMenu = menuId;
+  }
+
+  function setAudio(type) {
+    selectedAudio = type;
+    document.getElementById('audio-main-btn').classList.toggle('active', type === 'main');
+    document.getElementById('audio-comm-btn').classList.toggle('active', type === 'commentary');
+    updateSetupStatusText();
+  }
+
+  function setSubtitles(state) {
+    selectedSubtitles = state;
+    document.getElementById('sub-off-btn').classList.toggle('active', state === 'off');
+    document.getElementById('sub-on-btn').classList.toggle('active', state !== 'off');
+    updateSetupStatusText();
+  }
+
+  function updateSetupStatusText() {
+    const audioLabel = selectedAudio === 'main' ? 'Stereo' : 'Commentary';
+    const subLabel = selectedSubtitles === 'off' ? 'Off' : 'English';
+    setupStatus.innerText = `Audio: ${audioLabel} | Subtitles: ${subLabel}`;
+  }
+
+  function playMovie() {
+    const movieFile = (selectedAudio === 'commentary') ? 'movie_commentary.mp4' : 'movie.mp4';
+    playScene(movieFile);
+  }
+
+  function playScene(videoFile) {
+    Object.values(menus).forEach(menu => menu.classList.add('hidden'));
+    
+    if (selectedSubtitles === 'off') {
+      track.src = '';
+      track.track.mode = 'disabled';
+    } else {
+      track.src = selectedSubtitles;
+      track.track.mode = 'showing';
+    }
+    
+    player.src = videoFile;
+    player.loop = false;
+    player.play();
+  }
+
+  player.onended = function() {
+    track.track.mode = 'disabled';
+    player.src = 'menu.mp4';
+    player.loop = true;
+    player.play();
+    menus[currentActiveMenu].classList.remove('hidden');
+  };
+</script>
+</body>
+</html>
